@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCSK Sherpa AI Control Panel</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f5f7fa; padding: 20px; text-align: center; color: #333; }
+        .container { max-width: 400px; margin: 0 auto; background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        h2 { margin-bottom: 5px; color: #1a1f36; }
+        p { color: #697386; font-size: 14px; margin-bottom: 25px; }
+        .btn { width: 100%; padding: 16px; margin-bottom: 15px; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; color: white; cursor: pointer; transition: transform 0.1s; }
+        .btn:active { transform: scale(0.98); }
+        .critical { background: #df1b41; }
+        .warning { background: #f5a623; }
+        .seikan { background: #4f5b66; }
+        #status { margin-top: 20px; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: bold; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>SCSK Sherpa AI Control Tower</h2>
+    <p>Mobile Scenario Remote Trigger</p>
+
+    <button class="btn critical" onclick="triggerAlarm('BJK220', 'CRITICAL')">🚨 1. Trigger CRITICAL (Call + Slack)</button>
+    <button class="btn warning" onclick="triggerAlarm('BJK220', 'WARNING')">⚠️ 2. Trigger WARNING (Slack Only)</button>
+    <button class="btn seikan" onclick="triggerAlarm('BJK220', 'SEIKAN')">🔍 3. Trigger SEIKAN (Auto-close)</button>
+
+    <div id="status"></div>
+</div>
+
+<script>
+function triggerAlarm(id, type) {
+    // Your actual API Gateway URL
+    const baseUrl = "https://q0io74vpof.execute-api.ap-northeast-1.amazonaws.com/default/Sherpa-AI-Dispatcher";
+    
+    // Switch to GET method by appending parameters to the URL!
+    const targetUrl = `${baseUrl}?alarm_id=${id}&alarm_type=${type}`;
+
+    const statusDiv = document.getElementById("status");
+    statusDiv.style.display = "block";
+    statusDiv.style.backgroundColor = "#e3e8ee";
+    statusDiv.style.color = "#4f5b66";
+    statusDiv.innerText = `[${type}] Transmitting signal... (Approx. 10s)`;
+
+    // Bypass CORS preflight physically using no-cors mode
+    fetch(targetUrl, {
+        method: "GET",
+        mode: "no-cors" 
+    })
+    .then(() => {
+        statusDiv.style.backgroundColor = "#e2f9f0";
+        statusDiv.style.color = "#0e7054";
+        statusDiv.innerText = `★ Trigger successful! Backend control tower initiated the ${type} process.`;
+    })
+    .catch((error) => {
+        statusDiv.style.backgroundColor = "#fce8e6";
+        statusDiv.style.color = "#c5221f";
+        statusDiv.innerText = "Trigger failed: " + error;
+    });
+}
+</script>
+
+</body>
+</html>
