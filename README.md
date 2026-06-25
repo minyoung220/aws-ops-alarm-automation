@@ -4,7 +4,8 @@
 ![AI](https://img.shields.io/badge/GenAI-Amazon%20Bedrock%20(Claude%204.6)-blue?style=for-the-badge)
 ![API](https://img.shields.io/badge/Integration-Slack%20%7C%20Twilio-4A154B?style=for-the-badge)
 
-<img width="1051" height="917" alt="critical" src="https://github.com/user-attachments/assets/27574465-2e21-40e3-aec3-875ebaec1b08" />
+<img width="1101" height="909" alt="critical" src="https://github.com/user-attachments/assets/66d50432-40fd-4abd-a431-a35f63a2b363" />
+
 
 ## 1. プロジェクト概要 (Executive Summary)
 本プロジェクトは、クラウドインフラ運用中に発生する夜間の監視空白および障害伝播の遅延問題を解決するために考案された、イベント駆動型（Event-Driven）の自動障害対応システムです。
@@ -28,4 +29,4 @@
 - 🔍 **SEIKAN (静観・監視除外)：** 高価なBedrock(LLM)呼び出しを根元から遮断し、0.01秒で自動停止およびSlackアラート送信。 **（不要なAIコスト$0を実現）**
 
 ## 5. デモ動画 (Demo)
-[*(※後日、スマートフォンでのデモ動画をここに追加する予定です)*](https://youtu.be/rAMN6wF3vDw)
+[*(Youbute)*](https://youtu.be/rAMN6wF3vDw)
