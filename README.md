@@ -1,4 +1,4 @@
-# 🚨 GenAIベース サーバーレス無人障害検知・対応自動化システム (PoC)
+# GenAIベース サーバーレス無人障害検知・対応自動化システム (PoC)
 
 ![AWS](https://img.shields.io/badge/AWS-Lambda%20%7C%20API%20Gateway%20%7C%20S3-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
 ![AI](https://img.shields.io/badge/GenAI-Amazon%20Bedrock%20(Claude%204.6)-blue?style=for-the-badge)
