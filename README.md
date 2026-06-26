@@ -28,5 +28,4 @@
 - ⚠️ **WARNING (一般注意)：** AI台本作成 ＋ Slack報告（音声電話は遮断）
 - 🔍 **SEIKAN (静観・監視除外)：** 高価なBedrock(LLM)呼び出しを根元から遮断し、0.01秒で自動停止およびSlackアラート送信。 **（不要なAIコスト$0を実現）**
 
-## 5. デモ動画 (Demo)
-[*(Youbute)*](https://youtu.be/rAMN6wF3vDw)
+
