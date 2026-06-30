@@ -3,8 +3,6 @@
 AWS Lambda + SQS + Bedrock + Slack + Twilioで構築したイベント駆動型のインシデント対応パイプラインです。
 障害発生 -> AI分析 -> Slack通知 -> Twilio音声通報までを「3〜5秒以内」に完了します。
 
-[デプロイガイド](./DEPLOY_GUIDE.md) | [チェックリスト](./CHECKLIST.md)
-
 ---
 
 ## アーキテクチャ
