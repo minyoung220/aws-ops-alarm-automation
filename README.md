@@ -1,31 +1,43 @@
-# GenAIベース サーバーレス無人障害検知・対応自動化システム (PoC)
+# Sherpa-V2 (AWS サーバーレス無人障害検知・対応自動化システム)
 
-![AWS](https://img.shields.io/badge/AWS-Lambda%20%7C%20API%20Gateway%20%7C%20S3-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
-![AI](https://img.shields.io/badge/GenAI-Amazon%20Bedrock%20(Claude%204.6)-blue?style=for-the-badge)
-![API](https://img.shields.io/badge/Integration-Slack%20%7C%20Twilio-4A154B?style=for-the-badge)
+AWS Lambda + SQS + Bedrock + Slack + Twilioで構築したイベント駆動型のインシデント対応パイプラインです。
+障害発生 -> AI分析 -> Slack通知 -> Twilio音声通報までを「3〜5秒以内」に完了します。
 
-<img width="1101" height="909" alt="critical" src="https://github.com/user-attachments/assets/66d50432-40fd-4abd-a431-a35f63a2b363" />
+[デプロイガイド](./DEPLOY_GUIDE.md) | [チェックリスト](./CHECKLIST.md)
 
+---
 
-## 1. プロジェクト概要 (Executive Summary)
-本プロジェクトは、クラウドインフラ運用中に発生する夜間の監視空白および障害伝播の遅延問題を解決するために考案された、イベント駆動型（Event-Driven）の自動障害対応システムです。
-
-従来の手動監視方式から脱却し、障害発生時に **Amazon Bedrock（Claude 4.6 Sonnet）** がマニュアルを分析し、状況に応じた丁寧なビジネス日本語のレポートおよび音声台本を即時作成します。その後、**SlackおよびTwilio API** を通じて担当者へ超高速で伝播する100%サーバーレスパイプラインを構築しました。
-
-## 2. 解決したビジネス上の課題 (Pain Point)
-- **初動認知および伝播の遅延：** 深夜帯にCRITICAL障害が発生した際、担当者がアラームを確認し、マニュアルを探して状況を把握するために発生する物理的な時間のロス。
-- **言語の壁によるリスク：** 緊急時に外国人エンジニアがビジネス日本語の敬語で正確な障害状況および対応ガイドを作成しなければならない心理的・時間的負担。
-
-## 3. システムアーキテクチャ (Architecture)
-- **精密トリガー (API Gateway)：** 外部監視ソリューションまたはモバイルリモコンが障害信号(JSON)を送信。
-- **マニュアルクエリ (Amazon S3)：** AWS Lambdaが稼働し、S3に保存された障害マニュアルDBから過去の解決履歴を参照。
-- **GenAI頭脳レイヤー (Amazon Bedrock)：** Claude 4.6モデルがマニュアルを分析し、Slack本文と20秒間のIVR電話台本を作成。
-- **マルチチャネル伝播 (Slack & Twilio)：** Python標準HTTPライブラリにより、Slackへのリアルタイムテキスト報告とスマートフォンへのアウトバウンド日本語音声通話を同時送信。
-
-## 4. 差別化ポイントおよびコスト最適化 (Cost Optimization)
-単なるAI連携にとどまらず、実際のエンタープライズ環境におけるインフラコストと業務効率を考慮した3段階のシナリオルーティングロジックを適用しました。
-- 🚨 **CRITICAL (フルコース)：** AI台本作成 ＋ Slack詳細報告 ＋ Twilio音声電話ブリーフィング発信
-- ⚠️ **WARNING (一般注意)：** AI台本作成 ＋ Slack報告（音声電話は遮断）
-- 🔍 **SEIKAN (静観・監視除外)：** 高価なBedrock(LLM)呼び出しを根元から遮断し、0.01秒で自動停止およびSlackアラート送信。 **（不要なAIコスト$0を実現）**
+## アーキテクチャ
+<img width="978" height="564" alt="architecture" src="https://github.com/user-attachments/assets/1ac00b8a-85ad-46c9-a147-323ab9508a3b" />
 
 
+---
+
+## プロジェクト状況および中核成果
+- 開発期間: 2026.06.28 ~ 2026.07.01
+- ステータス: AWS本番環境へ100%デプロイ完了 (PoC)
+- 参加度: 100% 個人プロジェクト
+- テスト: 仮想アラートの発報から、Slackへの通知およびTwilio音声通話の着信までのE2E動作検証を完了
+  
+
+### 主要パフォーマンス指標 (Metrics)
+- Dispatcher 応答速度: 20〜50ms (即時200 OK返却によるAPI Gatewayタイムアウト防止)
+- Worker 処理時間: 3〜5秒 (AI分析 + Slack/Twilio送信)
+- コスト最適化: 障害1件あたり1セント未満 (月300件発生時、月額維持費1〜2ドル水準)
+
+---
+
+## 技術スタック (Tech Stack)
+- AWS Lambda: Dispatcher (128MB/3s), Worker (256MB/30s)
+- Amazon SQS: Visibility Timeout 30〜60s, Max Receive Count 3 (DLQ連携)
+- Amazon Bedrock: Claude 3 Haiku (速度およびコスト最適化)
+- Amazon API Gateway: REST API (x-api-key)
+- Slack & Twilio API
+- IaC: Terraform
+
+---
+
+## トラブルシューティング (問題解決)
+1. API Gatewayのタイムアウト問題: SQSを導入し「非同期」処理とすることで100%解決。
+2. メッセージの消失防止: DLQ (Dead Letter Queue)の連携により、データ損失率0%を達成。
+3. コスト爆発の防止: CRITICAL / WARNING / SEIKAN の3段階ルーティングにより、不要なAI API呼び出しを根本から遮断。
